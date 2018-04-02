@@ -1,0 +1,53 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerContorl : MonoBehaviour
+{
+    public enum RotateAxes
+    {
+        MouseXAndY = 0,
+        MouseX = 1,
+        MouseY = 2
+    }
+
+    public RotateAxes Axe = RotateAxes.MouseXAndY;
+
+    public float XSpeed = 9.0f;
+    public float YSpeed = 9.0f;
+
+    private float XMax = 45.0f;
+    private float XMin = -45.0f;
+
+    public float rotationX = 0.0f;
+	// Update is called once per frame
+	void Update ()
+	{
+	    MouseContorl();
+	}
+
+    private void MouseContorl()
+    {
+        if (Axe == RotateAxes.MouseX)
+        {
+            transform.Rotate(0,Input.GetAxis("Mouse X") * XSpeed * Time.deltaTime,0);
+        }
+        else if (Axe == RotateAxes.MouseY)
+        {
+            rotationX -= Input.GetAxis("Mouse Y") * YSpeed * Time.deltaTime;
+            rotationX = Mathf.Clamp(rotationX, XMin, XMax);
+
+            float rotationY = transform.localEulerAngles.y;
+            transform.localEulerAngles = new Vector3(rotationX, rotationY, 0);
+        }
+        else
+        {
+            rotationX -= Input.GetAxis("Mouse Y") * YSpeed;
+            rotationX = Mathf.Clamp(rotationX, XMin, XMax);
+
+            float rotationY = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * XSpeed * Time.deltaTime;
+
+            transform.localEulerAngles = new Vector3(rotationX,rotationY,0);
+        }
+    }
+}
