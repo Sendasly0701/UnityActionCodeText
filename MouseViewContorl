@@ -20,6 +20,15 @@ public class PlayerContorl : MonoBehaviour
     private float XMin = -45.0f;
 
     public float rotationX = 0.0f;
+    
+    private void Star()
+    {
+        Rigidbody body = GetComponent<Rigidbody>();
+        if (body != null)
+        {
+            body.freezeRotation = true;
+        }
+    }
 	// Update is called once per frame
 	void Update ()
 	{
