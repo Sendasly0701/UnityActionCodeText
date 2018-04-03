@@ -1,0 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[RequireComponent(typeof(CharacterController))]   //将需要的组件设为参数避免错误.
+[AddComponentMenu("Contorl Script/Player Move Contorl")]
+public class PlayerMoveContorl : MonoBehaviour
+{
+    
+    private CharacterController _charaterContorller;
+
+    public float Speed = 9.0f;
+
+    public float Gravity = -9.8f;
+	// Use this for initialization
+	void Start ()
+	{
+	    _charaterContorller = GetComponent<CharacterController>();
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		CharacterContorllerMove();
+	}
+
+    private void CharacterContorllerMove()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        Vector3 movement = new Vector3(horizontal * Speed,0,vertical * Speed);
+        movement = Vector3.ClampMagnitude(movement, Speed);   //将对角移动的速度限制为沿轴移动的一样.
+        movement.y = Gravity;
+
+        movement *= Time.deltaTime;
+        movement = transform.TransformDirection(movement);   //将局部坐标变为世界坐标， Transform.InverseTransformDirection是世界坐标到局部坐标.
+        _charaterContorller.Move(movement);
+    }
+}
