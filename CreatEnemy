@@ -1,0 +1,29 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CreatEnemy : MonoBehaviour
+{
+
+    [SerializeField] private GameObject _EnemyPrefab;       /*序列化对象，用来链接预设体.类似于Public变量的工作方式，
+                                                            ，为了避免其他脚本干扰，采用这种方式显然更加稳妥。*/
+
+    private GameObject _Enemy;
+
+	// Update is called once per frame
+	void Update ()
+	{
+	    CreatEnemys();
+	}
+
+    private void CreatEnemys()
+    {
+        if (_Enemy == null)
+        {
+            _Enemy = Instantiate(_EnemyPrefab) as GameObject;
+            _Enemy.transform.position = transform.position + new Vector3(0, 1.01f, 0);
+            float angle = Random.Range(0, 360);
+            _Enemy.transform.Rotate(0,angle,0);
+        }
+    }
+}
