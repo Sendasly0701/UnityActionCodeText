@@ -32,13 +32,23 @@ public class EnmeyRayContorl : MonoBehaviour
             RaycastHit hit;
             if (Physics.SphereCast(ray, 0.75f, out hit))
             {
-                if (hit.distance < _distance)    //如果到碰撞体的距离小于我们设定的距离.
+                GameObject hitObject = hit.transform.gameObject;
+                if (hitObject.GetComponent<PlayerCharacter>())
+                {
+                    if (fireball == null)
+                    {
+                        fireball = Instantiate(_FireballPrefab) as GameObject;
+                        fireball.transform.position = transform.TransformPoint(Vector3.forward * 1.5f); //生成点位于此脚本挂载的游戏物体的z轴前方1.5位置.
+                        fireball.transform.rotation = transform.rotation;
+                    }
+                }                
+                else if(hit.distance < _distance)    //如果到碰撞体的距离小于我们设定的距离.
                 {
                     float rotateNum = Random.Range(-100, 100);
                     transform.Rotate(0, rotateNum, 0);
                 }
             }
-        }
+        }        
     }
 
 }
