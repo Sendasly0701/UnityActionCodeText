@@ -2,63 +2,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RayShoterText : MonoBehaviour
+public class EnmeyRayContorl : MonoBehaviour
 {
+    public float speed = 3.0f;
+    public float _distance = 5.0f;
 
-    private Camera _camera;
-	// Use this for initialization
-	void Start ()
-	{
-	    _camera = GetComponent<Camera>();
+    private bool alive = true;
 
-	    Cursor.lockState = CursorLockMode.Locked;   //光标锁，将鼠标的锁定在游戏区域类，通过esc退出.
-	    Cursor.visible = false;     //隐藏鼠标光标，防止其出现其它操作.
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		RayContorl();
-	}
-
-    void OnGUI()
+    // Update is called once per frame
+    void Update()
     {
-        int size = 12;
-        float PosX = _camera.pixelWidth / 2 - size / 4;
-        float PosY = _camera.pixelHeight / 2 - size / 2;
-
-        GUI.Label(new Rect(PosX,PosY,size,size),"*");
+        if(alive)
+        {
+            transform.Translate(0, 0, speed * Time.deltaTime);
+        }
+               
+        RayContorllet();
     }
 
-    private void RayContorl()
+    public void SetAlive(bool _alive)
     {
-        if (Input.GetMouseButtonDown(0))
+        alive = _alive;
+    }
+    private void RayContorllet()
+    {
+        if (alive)
         {
-            Vector3 point = new Vector3(_camera.pixelWidth / 2.0f, _camera.pixelHeight / 2.0f, 0);
-            Ray ray = _camera.ScreenPointToRay(point);
+            Ray ray = new Ray(transform.position, transform.forward);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.SphereCast(ray, 0.75f, out hit))
             {
-                GameObject hitEnemy = hit.transform.gameObject;
-                ReactiveEnemy target = hitEnemy.GetComponent<ReactiveEnemy>();
-                if (target != null)
+                if (hit.distance < _distance)    //如果到碰撞体的距离小于我们设定的距离.
                 {
-                    target.InvokeThisCoroutine();       //调用攻击到的敌人的脚本中的方法.
+                    float rotateNum = Random.Range(-100, 100);
+                    transform.Rotate(0, rotateNum, 0);
                 }
-                else
-                {
-                    StartCoroutine(CreatBulletHole(hit.point));      //此point为RaycastHit所包含的.
-                }                
             }
         }
     }
 
-    private IEnumerator CreatBulletHole(Vector3 pos)
-    {
-        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);   //生成一个带有网格渲染器的游戏物体.类型为球.
-        sphere.transform.position = pos;
-
-        yield return new WaitForSeconds(1);
-
-        Destroy(sphere);
-    }
 }
+
