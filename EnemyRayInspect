@@ -1,0 +1,64 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class RayShoterText : MonoBehaviour
+{
+
+    private Camera _camera;
+	// Use this for initialization
+	void Start ()
+	{
+	    _camera = GetComponent<Camera>();
+
+	    Cursor.lockState = CursorLockMode.Locked;   //光标锁，将鼠标的锁定在游戏区域类，通过esc退出.
+	    Cursor.visible = false;     //隐藏鼠标光标，防止其出现其它操作.
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		RayContorl();
+	}
+
+    void OnGUI()
+    {
+        int size = 12;
+        float PosX = _camera.pixelWidth / 2 - size / 4;
+        float PosY = _camera.pixelHeight / 2 - size / 2;
+
+        GUI.Label(new Rect(PosX,PosY,size,size),"*");
+    }
+
+    private void RayContorl()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 point = new Vector3(_camera.pixelWidth / 2.0f, _camera.pixelHeight / 2.0f, 0);
+            Ray ray = _camera.ScreenPointToRay(point);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                GameObject hitEnemy = hit.transform.gameObject;
+                ReactiveEnemy target = hitEnemy.GetComponent<ReactiveEnemy>();
+                if (target != null)
+                {
+                    target.InvokeThisCoroutine();       //调用攻击到的敌人的脚本中的方法.
+                }
+                else
+                {
+                    StartCoroutine(CreatBulletHole(hit.point));      //此point为RaycastHit所包含的.
+                }                
+            }
+        }
+    }
+
+    private IEnumerator CreatBulletHole(Vector3 pos)
+    {
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);   //生成一个带有网格渲染器的游戏物体.类型为球.
+        sphere.transform.position = pos;
+
+        yield return new WaitForSeconds(1);
+
+        Destroy(sphere);
+    }
+}
