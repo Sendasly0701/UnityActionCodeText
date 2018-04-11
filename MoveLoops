@@ -1,0 +1,30 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SphereMoveLoop : MonoBehaviour
+{
+
+    public float moveSpeed = 2.0f;
+    public float zMax = 10.0f;
+    public float zMin = -10.0f;
+
+    private int _direction = 1;
+	
+	// Update is called once per frame
+	void Update () {
+		MoveLoop();
+	}
+
+    private void MoveLoop()
+    {
+        transform.Translate(0,0,_direction * moveSpeed * Time.deltaTime);
+
+        if (transform.position.z < zMin || transform.position.z > zMax)
+        {
+            _direction *= -1;
+            
+        }
+
+    }
+}
